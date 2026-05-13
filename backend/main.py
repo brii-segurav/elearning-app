@@ -9,7 +9,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 🌐 CORS
+# 🌐 CORS - Cross Origin Resource System
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
