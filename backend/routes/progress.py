@@ -16,7 +16,7 @@ def get_progress(user_id: int):
                     s.name AS subject_name,
                     p.completion_percentage,
                     COUNT(DISTINCT a.id) AS total_attempts,
-                    SUM(CASE WHEN a.is_correct THEN 1 ELSE 0 END) AS correct_count
+                    SUM(CASE WHEN a.is_correct = 1 THEN 1 ELSE 0 END) AS correct_count
                 FROM progress p
                 JOIN topics t ON p.topic_id = t.id
                 JOIN subjects s ON t.subject_id = s.id
@@ -63,7 +63,7 @@ def get_stats(user_id: int):
         ).scalar()
 
         correct = conn.execute(
-            text("SELECT COUNT(*) FROM attempts WHERE user_id = :uid AND is_correct = true"),
+            text("SELECT COUNT(*) FROM attempts WHERE user_id = :uid AND is_correct = 1"),
             {"uid": user_id}
         ).scalar()
 

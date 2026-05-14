@@ -47,23 +47,36 @@ def save_attempt(attempt: AttemptIn):
             text("""
                 SELECT COUNT(*) FROM attempts a
                 JOIN questions q ON a.question_id = q.id
-                WHERE a.user_id = :uid AND q.topic_id = :tid AND a.is_correct = true
+                WHERE a.user_id = :uid AND q.topic_id = :tid AND a.is_correct = 1
             """),
             {"uid": attempt.user_id, "tid": topic_id}
         ).scalar()
 
         percentage = round((correct_count / total_questions) * 100, 1) if total_questions > 0 else 0.0
 
-        # Upsert en progress
-        conn.execute(
-            text("""
-                INSERT INTO progress (user_id, topic_id, completion_percentage, updated_at)
-                VALUES (:uid, :tid, :pct, NOW())
-                ON CONFLICT (user_id, topic_id)
-                DO UPDATE SET completion_percentage = :pct, updated_at = NOW()
-            """),
-            {"uid": attempt.user_id, "tid": topic_id, "pct": percentage}
-        )
+        # Upsert en progress (compatible con SQLite)
+        existing_progress = conn.execute(
+            text("SELECT id FROM progress WHERE user_id = :uid AND topic_id = :tid"),
+            {"uid": attempt.user_id, "tid": topic_id}
+        ).fetchone()
+
+        if existing_progress:
+            conn.execute(
+                text("""
+                    UPDATE progress
+                    SET completion_percentage = :pct, updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = :uid AND topic_id = :tid
+                """),
+                {"uid": attempt.user_id, "tid": topic_id, "pct": percentage}
+            )
+        else:
+            conn.execute(
+                text("""
+                    INSERT INTO progress (user_id, topic_id, completion_percentage, updated_at)
+                    VALUES (:uid, :tid, :pct, CURRENT_TIMESTAMP)
+                """),
+                {"uid": attempt.user_id, "tid": topic_id, "pct": percentage}
+            )
 
         conn.commit()
 

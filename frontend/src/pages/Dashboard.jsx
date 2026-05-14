@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../services/api"
+import Icon from "../components/Icon"
 
 function getUser() {
   return JSON.parse(localStorage.getItem("user")) || {}
@@ -11,33 +12,37 @@ function Navbar({ user, section, setSection, theme, toggleTheme, onLogout }) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        🧪 Cognia Lab
+        <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+        Cognia Lab
       </div>
 
       <div className="navbar-nav">
         {[
-          { id: "subjects", label: "📚 Materias" },
-          { id: "progress", label: "📊 Progreso" },
-          { id: "news",     label: "📰 Noticias" },
+          { id: "subjects", label: "Materias",    iconId: "book"      },
+          { id: "progress", label: "Progreso",    iconId: "chart"     },
+          { id: "news",     label: "Noticias",    iconId: "newspaper" },
         ].map(item => (
           <button
             key={item.id}
             className={`nav-btn ${section === item.id ? "active" : ""}`}
             onClick={() => setSection(item.id)}
           >
+            <Icon id={item.iconId} size={16} style={{ marginRight: ".35rem" }} />
             {item.label}
           </button>
         ))}
       </div>
 
       <div className="navbar-actions">
-        <button className="btn btn-ghost btn-sm" onClick={toggleTheme}>
-          {theme === "dark" ? "☀️" : "🌙"}
+        <button className="btn btn-ghost btn-sm" onClick={toggleTheme} title={theme === "dark" ? "Modo claro" : "Modo oscuro"}>
+          <Icon id={theme === "dark" ? "sun" : "moon"} size={18} />
         </button>
-        <span style={{ fontSize: ".9rem", color: "var(--text-muted)" }}>
-          👤 {user?.name}
+        <span style={{ fontSize: ".9rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: ".3rem" }}>
+          <Icon id="user" size={16} />
+          {user?.name}
         </span>
-        <button className="btn btn-ghost btn-sm" onClick={onLogout}>
+        <button className="btn btn-ghost btn-sm" onClick={onLogout} style={{ display: "flex", alignItems: "center", gap: ".3rem" }}>
+          <Icon id="logout" size={16} />
           Salir
         </button>
       </div>
@@ -88,7 +93,10 @@ function Dashboard() {
       <div className="container main-content">
         {/* Saludo */}
         <div className="fade-in" style={{ marginBottom: "2rem" }}>
-          <h1>Hola, {user?.name} 👋</h1>
+          <h1 style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
+            Hola, {user?.name}
+            <Icon id="sparkles" size={28} style={{ color: "var(--primary)" }} />
+          </h1>
           <p>Practica hoy. Domina el examen.</p>
         </div>
 
@@ -114,7 +122,7 @@ function SubjectsSection({ user, navigate }) {
     }
   }, [])
 
-  const icons = ["📘", "🔢", "📖", "🔬", "🌍"]
+  const subjectIcons = ["book", "math", "open-book", "microscope", "globe"]
 
   return (
     <div className="fade-in">
@@ -147,7 +155,7 @@ function SubjectsSection({ user, navigate }) {
 
       {subjects.length === 0 ? (
         <div className="empty-state">
-          <div className="icon">📚</div>
+          <div className="icon"><Icon id="book" size={40} /></div>
           <p>Cargando materias...</p>
         </div>
       ) : (
@@ -158,7 +166,7 @@ function SubjectsSection({ user, navigate }) {
               className="subject-card"
               onClick={() => navigate(`/topics/${s.id}`)}
             >
-              <div style={{ fontSize: "2.5rem" }}>{icons[i] || "📚"}</div>
+              <Icon id={subjectIcons[i] || "book"} size={40} />
               <h3>{s.name}</h3>
               <p>{s.description || "Prepárate con preguntas tipo bachillerato"}</p>
               <div style={{ marginTop: "auto" }}>
@@ -167,9 +175,13 @@ function SubjectsSection({ user, navigate }) {
                   padding: ".3rem .8rem",
                   borderRadius: "999px",
                   fontSize: ".8rem",
-                  fontWeight: 600
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: ".3rem"
                 }}>
-                  Ver temas →
+                  Ver temas
+                  <Icon id="arrow-right" size={14} />
                 </span>
               </div>
             </div>
@@ -198,7 +210,7 @@ function ProgressSection({ user }) {
   if (!progress || progress.topics?.length === 0) {
     return (
       <div className="empty-state fade-in">
-        <div className="icon">📊</div>
+        <div className="icon"><Icon id="chart" size={40} /></div>
         <h3>Sin progreso aún</h3>
         <p>Responde preguntas para ver tu avance aquí</p>
       </div>
@@ -238,8 +250,14 @@ function ProgressSection({ user }) {
               <div className="progress-fill" style={{ width: `${t.completion_percentage}%` }} />
             </div>
             <div style={{ display: "flex", gap: "1rem", marginTop: ".75rem", fontSize: ".85rem", color: "var(--text-muted)" }}>
-              <span>✅ {t.correct_count} correctas</span>
-              <span>📝 {t.total_attempts} intentos</span>
+              <span style={{ display: "flex", alignItems: "center", gap: ".3rem" }}>
+                <Icon id="check-circle" size={14} style={{ color: "var(--success)" }} />
+                {t.correct_count} correctas
+              </span>
+              <span style={{ display: "flex", alignItems: "center", gap: ".3rem" }}>
+                <Icon id="scroll" size={14} />
+                {t.total_attempts} intentos
+              </span>
             </div>
           </div>
         ))}
@@ -252,25 +270,25 @@ function ProgressSection({ user }) {
 function NewsSection() {
   const news = [
     {
-      icon: "🗓️",
+      iconId: "calendar",
       title: "Examen de bachillerato 2025",
       body: "Las pruebas nacionales se realizarán en noviembre. Asegúrate de repasar todos los temas de Estudios Sociales.",
       tag: "Importante"
     },
     {
-      icon: "📘",
+      iconId: "book",
       title: "Nuevos temas disponibles",
       body: "Ya puedes practicar Historia de Costa Rica, Geografía, Educación Cívica e Historia Universal.",
       tag: "Nuevo"
     },
     {
-      icon: "🚀",
+      iconId: "rocket",
       title: "Próximamente: Simulacros completos",
       body: "Pronto podrás realizar simulacros cronometrados con el formato real del examen de bachillerato.",
       tag: "Próximamente"
     },
     {
-      icon: "🤖",
+      iconId: "robot",
       title: "IA educativa en camino",
       body: "Estamos desarrollando un tutor inteligente que te explicará cada respuesta y adaptará el contenido a tu nivel.",
       tag: "Futuro"
@@ -278,10 +296,10 @@ function NewsSection() {
   ]
 
   const tagColors = {
-    "Importante": "badge-danger",
-    "Nuevo": "badge-success",
+    "Importante":   "badge-danger",
+    "Nuevo":        "badge-success",
     "Próximamente": "badge-warning",
-    "Futuro": "badge-primary"
+    "Futuro":       "badge-primary"
   }
 
   return (
@@ -294,7 +312,9 @@ function NewsSection() {
         {news.map((n, i) => (
           <div key={i} className="card">
             <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-              <div style={{ fontSize: "2rem", flexShrink: 0 }}>{n.icon}</div>
+              <div style={{ flexShrink: 0, color: "var(--primary)" }}>
+                <Icon id={n.iconId} size={28} />
+              </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: ".75rem", marginBottom: ".4rem" }}>
                   <h3 style={{ margin: 0 }}>{n.title}</h3>

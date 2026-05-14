@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../services/api"
+import Icon from "../components/Icon"
 
 function Login() {
   const navigate = useNavigate()
@@ -20,7 +21,6 @@ function Login() {
       if (data.msg === "Inicio de sesión exitoso") {
         localStorage.setItem("auth", "true")
         localStorage.setItem("user", JSON.stringify(data.user))
-        // Aplicar tema guardado
         document.documentElement.setAttribute("data-theme", data.user.theme || "light")
         navigate("/dashboard")
       } else {
@@ -33,22 +33,34 @@ function Login() {
     }
   }
 
+  const features = [
+    { iconId: "book",         label: "Estudios Sociales" },
+    { iconId: "chart",        label: "Seguimiento de progreso" },
+    { iconId: "check-circle", label: "Preguntas tipo bachillerato" },
+  ]
+
   return (
     <div className="auth-page">
       {/* Hero */}
       <div className="auth-hero">
-        <div style={{ fontSize: "4rem" }}>🧪</div>
+        <Icon id="flask" size={64} style={{ color: "#fff", marginBottom: ".5rem" }} />
         <h1>Cognia Lab</h1>
         <p>Practica hoy.<br />Domina el examen.</p>
         <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: ".75rem", width: "100%", maxWidth: "280px" }}>
-          {["📚 Estudios Sociales", "📊 Seguimiento de progreso", "✅ Preguntas tipo bachillerato"].map(f => (
-            <div key={f} style={{
+          {features.map(f => (
+            <div key={f.label} style={{
               background: "rgba(255,255,255,.15)",
               borderRadius: "10px",
               padding: ".75rem 1rem",
               fontSize: ".9rem",
-              backdropFilter: "blur(4px)"
-            }}>{f}</div>
+              backdropFilter: "blur(4px)",
+              display: "flex",
+              alignItems: "center",
+              gap: ".6rem"
+            }}>
+              <Icon id={f.iconId} size={18} />
+              {f.label}
+            </div>
           ))}
         </div>
       </div>
@@ -91,9 +103,13 @@ function Login() {
                 color: "#991B1B",
                 borderRadius: "8px",
                 fontSize: ".9rem",
-                marginBottom: "1rem"
+                marginBottom: "1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: ".5rem"
               }}>
-                ⚠️ {error}
+                <Icon id="warning" size={16} />
+                {error}
               </div>
             )}
 
@@ -108,7 +124,7 @@ function Login() {
 
           <div className="divider">o</div>
 
-              <p style={{ textAlign: "center", fontSize: ".9rem" }}>
+          <p style={{ textAlign: "center", fontSize: ".9rem" }}>
             ¿No tienes cuenta?{" "}
             <button
               onClick={() => navigate("/register")}

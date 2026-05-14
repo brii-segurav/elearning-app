@@ -1,49 +1,50 @@
 import { useNavigate } from "react-router-dom"
+import Icon from "../components/Icon"
 
 const features = [
   {
-    icon: "📚",
+    iconId: "book",
     title: "Contenido oficial",
     desc: "Preguntas basadas en el programa del MEP, organizadas por materia y tema para un estudio estructurado."
   },
   {
-    icon: "📊",
+    iconId: "chart",
     title: "Progreso en tiempo real",
     desc: "Visualiza tu avance por tema, porcentaje de aciertos y estadísticas detalladas de tu desempeño."
   },
   {
-    icon: "✅",
+    iconId: "check-circle",
     title: "Feedback inmediato",
     desc: "Cada respuesta incluye una explicación detallada para que entiendas el porqué, no solo el qué."
   },
   {
-    icon: "🌙",
+    iconId: "moon",
     title: "Modo oscuro",
     desc: "Estudia cómodamente de día o de noche con el tema que prefieras, guardado en tu perfil."
   },
   {
-    icon: "🎯",
+    iconId: "target",
     title: "Práctica dirigida",
     desc: "Navega por temas específicos y enfócate en las áreas donde más necesitas mejorar."
   },
   {
-    icon: "🤖",
+    iconId: "robot",
     title: "IA educativa (próximo)",
     desc: "Un tutor inteligente que adaptará el contenido a tu nivel y te guiará en tiempo real."
   },
 ]
 
 const steps = [
-  { n: "1", icon: "✍️", title: "Crea tu cuenta", desc: "Regístrate gratis en menos de un minuto con tu correo." },
-  { n: "2", icon: "📖", title: "Elige un tema",  desc: "Selecciona la materia y el tema que quieres practicar." },
-  { n: "3", icon: "🏆", title: "Practica y mejora", desc: "Responde preguntas, recibe feedback y sigue tu progreso." },
+  { n: "1", iconId: "pencil",    title: "Crea tu cuenta",    desc: "Regístrate gratis en menos de un minuto con tu correo." },
+  { n: "2", iconId: "open-book", title: "Elige un tema",     desc: "Selecciona la materia y el tema que quieres practicar." },
+  { n: "3", iconId: "trophy",    title: "Practica y mejora", desc: "Responde preguntas, recibe feedback y sigue tu progreso." },
 ]
 
 const subjects = [
-  { icon: "📘", name: "Estudios Sociales", topics: 4, questions: 25, available: true },
-  { icon: "🔢", name: "Matemática",        topics: 0, questions: 0,  available: false },
-  { icon: "📖", name: "Español",           topics: 0, questions: 0,  available: false },
-  { icon: "🔬", name: "Ciencias",          topics: 0, questions: 0,  available: false },
+  { iconId: "book",       name: "Estudios Sociales", topics: 4, questions: 25, available: true },
+  { iconId: "math",       name: "Matemática",        topics: 0, questions: 0,  available: false },
+  { iconId: "open-book",  name: "Español",           topics: 0, questions: 0,  available: false },
+  { iconId: "microscope", name: "Ciencias",          topics: 0, questions: 0,  available: false },
 ]
 
 export default function Landing() {
@@ -54,7 +55,10 @@ export default function Landing() {
 
       {/* ── Navbar ─────────────────────────────────────────── */}
       <nav className="landing-nav">
-        <span className="landing-nav-brand">🧪 Cognia Lab</span>
+        <span className="landing-nav-brand">
+          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+          Cognia Lab
+        </span>
 
         <div className="landing-nav-links">
           <a href="#features">Características</a>
@@ -79,7 +83,8 @@ export default function Landing() {
           {/* Texto */}
           <div className="hero-content fade-in">
             <div className="hero-badge">
-              🇨🇷 Bachillerato Costa Rica
+              <Icon id="flag" size={16} style={{ marginRight: ".4rem" }} />
+              Bachillerato Costa Rica
             </div>
 
             <h1>
@@ -94,7 +99,8 @@ export default function Landing() {
 
             <div className="hero-actions">
               <button className="btn btn-primary btn-lg" onClick={() => navigate("/register")}>
-                Empezar gratis →
+                Empezar gratis
+                <Icon id="arrow-right" size={18} style={{ marginLeft: ".4rem" }} />
               </button>
               <button className="btn btn-outline btn-lg" onClick={() => navigate("/login")}>
                 Ya tengo cuenta
@@ -138,7 +144,9 @@ export default function Landing() {
           <div className="grid-3">
             {features.map((f, i) => (
               <div key={i} className="feature-card fade-in" style={{ animationDelay: `${i * .08}s` }}>
-                <div className="feature-icon">{f.icon}</div>
+                <div className="feature-icon">
+                  <Icon id={f.iconId} size={28} />
+                </div>
                 <h3>{f.title}</h3>
                 <p>{f.desc}</p>
               </div>
@@ -162,7 +170,9 @@ export default function Landing() {
             {steps.map((s, i) => (
               <div key={i} className="step-card fade-in" style={{ animationDelay: `${i * .1}s` }}>
                 <div className="step-number">{s.n}</div>
-                <div style={{ fontSize: "2rem", marginBottom: ".75rem" }}>{s.icon}</div>
+                <div style={{ marginBottom: ".75rem" }}>
+                  <Icon id={s.iconId} size={32} />
+                </div>
                 <h3 style={{ marginBottom: ".5rem" }}>{s.title}</h3>
                 <p>{s.desc}</p>
               </div>
@@ -195,7 +205,9 @@ export default function Landing() {
                 }}
                 onClick={() => s.available && navigate("/register")}
               >
-                <div style={{ fontSize: "2.5rem", marginBottom: ".75rem" }}>{s.icon}</div>
+                <div style={{ marginBottom: ".75rem" }}>
+                  <Icon id={s.iconId} size={40} />
+                </div>
                 <h3 style={{ marginBottom: ".5rem" }}>{s.name}</h3>
                 {s.available ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: ".3rem" }}>
@@ -221,7 +233,8 @@ export default function Landing() {
             <p>Únete gratis y empieza a practicar hoy mismo.</p>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               <button className="btn btn-white btn-lg" onClick={() => navigate("/register")}>
-                Crear cuenta gratis →
+                Crear cuenta gratis
+                <Icon id="arrow-right" size={18} style={{ marginLeft: ".4rem" }} />
               </button>
               <button
                 className="btn btn-lg"
@@ -240,7 +253,10 @@ export default function Landing() {
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "3rem", paddingBottom: "2rem", borderBottom: "1px solid #1F2937" }}>
             <div>
-              <div className="footer-brand">🧪 Cognia Lab</div>
+              <div className="footer-brand">
+                <Icon id="flask" size={18} style={{ marginRight: ".4rem" }} />
+                Cognia Lab
+              </div>
               <p style={{ fontSize: ".9rem", maxWidth: "280px", marginTop: ".5rem" }}>
                 Laboratorio de aprendizaje para la preparación del examen de bachillerato de Costa Rica.
               </p>
@@ -265,7 +281,7 @@ export default function Landing() {
             </div>
           </div>
           <p className="footer-copy">
-            © 2025 Cognia Lab · Hecho para estudiantes costarricenses 🇨🇷
+            © 2025 Cognia Lab · Hecho para estudiantes costarricenses
           </p>
         </div>
       </footer>
@@ -292,8 +308,10 @@ function MockupCard() {
             width: 40, height: 40, borderRadius: "10px",
             background: "var(--gradient-card)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.2rem"
-          }}>📘</div>
+            color: "#fff"
+          }}>
+            <Icon id="book" size={20} />
+          </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: ".95rem", color: "var(--text)" }}>Historia de Costa Rica</div>
             <div style={{ fontSize: ".8rem", color: "var(--text-muted)" }}>Pregunta 3 de 8</div>
@@ -321,13 +339,18 @@ function MockupCard() {
             style={{ marginBottom: ".5rem", pointerEvents: "none", padding: ".65rem 1rem" }}>
             <span className="option-letter" style={{ width: 28, height: 28, fontSize: ".8rem" }}>{o.l}</span>
             <span style={{ fontSize: ".9rem" }}>{o.t}</span>
-            {o.s === "correct" && <span style={{ marginLeft: "auto" }}>✅</span>}
+            {o.s === "correct" && (
+              <span style={{ marginLeft: "auto", color: "var(--success)" }}>
+                <Icon id="check-circle" size={16} />
+              </span>
+            )}
           </div>
         ))}
 
         {/* Explicación */}
-        <div className="explanation-box" style={{ fontSize: ".82rem", marginTop: ".75rem" }}>
-          💡 José Figueres Ferrer abolió el ejército el 1 de diciembre de 1948.
+        <div className="explanation-box" style={{ fontSize: ".82rem", marginTop: ".75rem", display: "flex", gap: ".5rem", alignItems: "flex-start" }}>
+          <Icon id="lightbulb" size={14} style={{ marginTop: "2px", flexShrink: 0 }} />
+          José Figueres Ferrer abolió el ejército el 1 de diciembre de 1948.
         </div>
       </div>
 
@@ -339,7 +362,7 @@ function MockupCard() {
         boxShadow: "var(--shadow-md)",
         display: "flex", alignItems: "center", gap: ".6rem"
       }}>
-        <span style={{ fontSize: "1.3rem" }}>🏆</span>
+        <Icon id="trophy" size={22} style={{ color: "var(--primary)" }} />
         <div>
           <div style={{ fontWeight: 700, fontSize: ".9rem", color: "var(--text)" }}>85%</div>
           <div style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>Precisión</div>
@@ -352,9 +375,11 @@ function MockupCard() {
         background: "var(--gradient-card)", color: "#fff",
         borderRadius: "12px", padding: ".6rem 1rem",
         boxShadow: "var(--shadow-md)",
-        fontSize: ".85rem", fontWeight: 700
+        fontSize: ".85rem", fontWeight: 700,
+        display: "flex", alignItems: "center", gap: ".4rem"
       }}>
-        🔥 3 correctas seguidas
+        <Icon id="fire" size={16} />
+        3 correctas seguidas
       </div>
     </div>
   )

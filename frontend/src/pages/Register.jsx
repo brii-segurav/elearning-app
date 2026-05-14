@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../services/api"
+import Icon from "../components/Icon"
 
 function Register() {
   const navigate = useNavigate()
@@ -36,7 +37,7 @@ function Register() {
     <div className="auth-page">
       {/* Hero */}
       <div className="auth-hero">
-        <div style={{ fontSize: "4rem" }}>🧪</div>
+        <Icon id="flask" size={64} style={{ color: "#fff", marginBottom: ".5rem" }} />
         <h1>Cognia Lab</h1>
         <p>Tu laboratorio de aprendizaje para el bachillerato</p>
         <div style={{ marginTop: "1.5rem", textAlign: "center", opacity: .85 }}>
@@ -90,8 +91,8 @@ function Register() {
               <div className="form-group">
                 <label className="form-label">Tema</label>
                 <select className="input" onChange={set("theme")}>
-                  <option value="light">☀️ Claro</option>
-                  <option value="dark">🌙 Oscuro</option>
+                  <option value="light">Claro</option>
+                  <option value="dark">Oscuro</option>
                 </select>
               </div>
             </div>
@@ -103,9 +104,13 @@ function Register() {
                 color: "#991B1B",
                 borderRadius: "8px",
                 fontSize: ".9rem",
-                marginBottom: "1rem"
+                marginBottom: "1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: ".5rem"
               }}>
-                ⚠️ {error}
+                <Icon id="warning" size={16} />
+                {error}
               </div>
             )}
 

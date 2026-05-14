@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../services/api"
+import Icon from "../components/Icon"
 
 function Questions() {
   const { topicId } = useParams()
@@ -10,27 +11,19 @@ function Questions() {
   const [questions, setQuestions] = useState([])
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
-  const [result, setResult] = useState(null)   // { is_correct, correct_answer, explanation }
+  const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [score, setScore] = useState({ correct: 0, total: 0 })
   const [finished, setFinished] = useState(false)
-  const [topicName, setTopicName] = useState("")
 
   useEffect(() => {
     if (!localStorage.getItem("auth")) { navigate("/login"); return }
 
     api.get(`/questions/${topicId}`)
-      .then(data => {
-        setQuestions(data)
-        // Obtener nombre del tema desde subjects
-        return api.get("/subjects")
-      })
+      .then(data => setQuestions(data))
       .catch(console.error)
       .finally(() => setLoading(false))
-
-    // Obtener nombre del tema
-    api.get(`/topics/0`).catch(() => {})
   }, [topicId])
 
   const currentQ = questions[current]
@@ -88,12 +81,15 @@ function Questions() {
     return (
       <div className="page">
         <nav className="navbar">
-          <div className="navbar-brand">🧪 Cognia Lab</div>
+          <div className="navbar-brand">
+            <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+            Cognia Lab
+          </div>
         </nav>
         <div className="container main-content">
           <button className="back-btn" onClick={() => navigate(-1)}>← Volver</button>
           <div className="empty-state">
-            <div className="icon">❓</div>
+            <div className="icon"><Icon id="question" size={40} /></div>
             <h3>Sin preguntas disponibles</h3>
             <p>Este tema aún no tiene preguntas cargadas</p>
           </div>
@@ -105,8 +101,9 @@ function Questions() {
   // ── Pantalla de resultados finales ────────────────────────────────────────
   if (finished) {
     const pct = Math.round((score.correct / score.total) * 100)
-    const emoji = pct >= 80 ? "🏆" : pct >= 60 ? "👍" : "💪"
-    const msg = pct >= 80
+
+    const resultIcon  = pct >= 80 ? "trophy"    : pct >= 60 ? "thumbs-up" : "muscle"
+    const msg         = pct >= 80
       ? "¡Excelente dominio del tema!"
       : pct >= 60
       ? "Buen trabajo, sigue practicando"
@@ -115,11 +112,16 @@ function Questions() {
     return (
       <div className="page">
         <nav className="navbar">
-          <div className="navbar-brand">🧪 Cognia Lab</div>
+          <div className="navbar-brand">
+            <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+            Cognia Lab
+          </div>
         </nav>
         <div className="container main-content">
           <div className="card fade-in" style={{ maxWidth: "520px", margin: "2rem auto", textAlign: "center" }}>
-            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>{emoji}</div>
+            <div style={{ marginBottom: "1rem", color: "var(--primary)" }}>
+              <Icon id={resultIcon} size={64} />
+            </div>
             <h2 style={{ marginBottom: ".5rem" }}>Práctica completada</h2>
             <p style={{ marginBottom: "2rem" }}>{msg}</p>
 
@@ -145,8 +147,10 @@ function Questions() {
             </div>
 
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-              <button className="btn btn-outline" onClick={handleRestart}>
-                🔄 Repetir
+              <button className="btn btn-outline" onClick={handleRestart}
+                style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>
+                <Icon id="refresh" size={16} />
+                Repetir
               </button>
               <button className="btn btn-primary" onClick={() => navigate(-1)}>
                 ← Volver a temas
@@ -176,12 +180,18 @@ function Questions() {
   return (
     <div className="page">
       <nav className="navbar">
-        <div className="navbar-brand">🧪 Cognia Lab</div>
+        <div className="navbar-brand">
+          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+          Cognia Lab
+        </div>
         <div className="navbar-actions">
           <span style={{ fontSize: ".85rem", color: "var(--text-muted)" }}>
             {current + 1} / {questions.length}
           </span>
-          <span className="badge badge-success">{score.correct} ✅</span>
+          <span className="badge badge-success" style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
+            <Icon id="check" size={12} />
+            {score.correct}
+          </span>
           <button className="btn btn-ghost btn-sm" onClick={() => navigate(-1)}>Salir</button>
         </div>
       </nav>
@@ -225,10 +235,14 @@ function Questions() {
                   <span className="option-letter">{opt.letter}</span>
                   <span>{opt.text}</span>
                   {result && opt.letter === result.correct_answer && (
-                    <span style={{ marginLeft: "auto" }}>✅</span>
+                    <span style={{ marginLeft: "auto", color: "var(--success)" }}>
+                      <Icon id="check-circle" size={18} />
+                    </span>
                   )}
                   {result && opt.letter === selected && !result.is_correct && opt.letter !== result.correct_answer && (
-                    <span style={{ marginLeft: "auto" }}>❌</span>
+                    <span style={{ marginLeft: "auto", color: "var(--danger)" }}>
+                      <Icon id="x-mark" size={18} />
+                    </span>
                   )}
                 </button>
               )
@@ -237,8 +251,9 @@ function Questions() {
 
           {/* Explicación */}
           {result && result.explanation && (
-            <div className="explanation-box">
-              <strong>💡 Explicación:</strong> {result.explanation}
+            <div className="explanation-box" style={{ display: "flex", gap: ".5rem", alignItems: "flex-start" }}>
+              <Icon id="lightbulb" size={16} style={{ marginTop: "2px", flexShrink: 0 }} />
+              <div><strong>Explicación:</strong> {result.explanation}</div>
             </div>
           )}
 
@@ -248,12 +263,20 @@ function Questions() {
               <span style={{
                 fontWeight: 700,
                 color: result.is_correct ? "var(--success)" : "var(--danger)",
-                fontSize: "1rem"
+                fontSize: "1rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: ".4rem"
               }}>
-                {result.is_correct ? "✅ ¡Correcto!" : "❌ Incorrecto"}
+                {result.is_correct
+                  ? <><Icon id="check-circle" size={18} /> ¡Correcto!</>
+                  : <><Icon id="x-mark" size={18} /> Incorrecto</>
+                }
               </span>
-              <button className="btn btn-primary" onClick={handleNext}>
-                {current + 1 >= questions.length ? "Ver resultados →" : "Siguiente →"}
+              <button className="btn btn-primary" onClick={handleNext}
+                style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>
+                {current + 1 >= questions.length ? "Ver resultados" : "Siguiente"}
+                <Icon id="arrow-right" size={16} />
               </button>
             </div>
           )}

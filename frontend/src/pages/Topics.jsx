@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../services/api"
+import Icon from "../components/Icon"
+
+const TOPIC_ICONS = ["flag", "map", "scale", "globe", "scroll"]
 
 function Topics() {
   const { subjectId } = useParams()
@@ -33,9 +36,9 @@ function Topics() {
   }, [subjectId])
 
   const difficultyLabel = (pct) => {
-    if (pct >= 80) return { label: "Dominado", cls: "badge-success" }
+    if (pct >= 80) return { label: "Dominado",    cls: "badge-success" }
     if (pct >= 40) return { label: "En progreso", cls: "badge-warning" }
-    return { label: "Sin iniciar", cls: "badge-primary" }
+    return              { label: "Sin iniciar",   cls: "badge-primary" }
   }
 
   if (loading) {
@@ -50,9 +53,15 @@ function Topics() {
     <div className="page">
       {/* Navbar mínimo */}
       <nav className="navbar">
-        <div className="navbar-brand">🧪 Cognia Lab</div>
+        <div className="navbar-brand">
+          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
+          Cognia Lab
+        </div>
         <div className="navbar-actions">
-          <span style={{ fontSize: ".9rem", color: "var(--text-muted)" }}>👤 {user?.name}</span>
+          <span style={{ fontSize: ".9rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: ".3rem" }}>
+            <Icon id="user" size={16} />
+            {user?.name}
+          </span>
           <button className="btn btn-ghost btn-sm" onClick={() => navigate("/dashboard")}>
             Dashboard
           </button>
@@ -74,7 +83,7 @@ function Topics() {
 
         {topics.length === 0 ? (
           <div className="empty-state">
-            <div className="icon">📂</div>
+            <div className="icon"><Icon id="folder" size={40} /></div>
             <h3>Sin temas disponibles</h3>
             <p>Próximamente se agregarán temas a esta materia</p>
           </div>
@@ -90,9 +99,7 @@ function Topics() {
                   onClick={() => navigate(`/questions/${topic.id}`)}
                 >
                   <div className="flex-between">
-                    <span style={{ fontSize: "1.5rem" }}>
-                      {["🏛️", "🗺️", "⚖️", "🌐", "📜"][i] || "📖"}
-                    </span>
+                    <Icon id={TOPIC_ICONS[i] || "book"} size={24} style={{ color: "var(--primary)" }} />
                     <span className={`badge ${status.cls}`}>{status.label}</span>
                   </div>
 
@@ -110,8 +117,9 @@ function Topics() {
                   </div>
 
                   <div style={{ marginTop: ".5rem" }}>
-                    <span className="btn btn-outline btn-sm">
-                      {pct > 0 ? "Continuar práctica →" : "Comenzar →"}
+                    <span className="btn btn-outline btn-sm" style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
+                      {pct > 0 ? "Continuar práctica" : "Comenzar"}
+                      <Icon id="arrow-right" size={14} />
                     </span>
                   </div>
                 </div>

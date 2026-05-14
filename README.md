@@ -1,4 +1,4 @@
-# 🧪 Cognia Lab
+# Cognia Lab
 
 > **Practica hoy. Domina el examen.**
 
@@ -12,7 +12,7 @@ Plataforma de e-learning para la preparación del examen de bachillerato de Cost
 |---|---|
 | Frontend | React + Vite |
 | Backend | FastAPI (Python) |
-| Base de datos | PostgreSQL |
+| Base de datos | SQLite (archivo `elearning.db`) |
 | ORM | SQLAlchemy |
 | Seguridad | passlib + bcrypt + SHA-256 |
 | Routing | React Router DOM |
@@ -25,8 +25,8 @@ Plataforma de e-learning para la preparación del examen de bachillerato de Cost
 elearning-app/
 ├── backend/
 │   ├── main.py          # Entry point FastAPI
-│   ├── database.py      # Conexión PostgreSQL
-│   ├── seed.py          # Datos iniciales
+│   ├── database.py      # Conexión SQLite
+│   ├── seed.py          # Crea tablas y carga datos iniciales
 │   ├── auth/
 │   │   └── security.py  # Hash y verificación de contraseñas
 │   ├── routes/
@@ -43,10 +43,12 @@ elearning-app/
     └── src/
         ├── main.jsx
         ├── index.css
+        ├── components/
+        │   └── Icon.jsx         # Componente de iconos SVG
         ├── services/
-        │   └── api.js       # Cliente HTTP centralizado
+        │   └── api.js           # Cliente HTTP centralizado
         └── pages/
-            ├── App.jsx      # Rutas
+            ├── App.jsx          # Rutas
             ├── Login.jsx
             ├── Register.jsx
             ├── Dashboard.jsx
@@ -61,7 +63,9 @@ elearning-app/
 ### Requisitos previos
 - Python 3.10+
 - Node.js 18+
-- PostgreSQL 14+
+
+> No se requiere instalar PostgreSQL ni ninguna base de datos externa.
+> SQLite viene incluido con Python y crea el archivo `elearning.db` automáticamente.
 
 ### Backend
 
@@ -73,9 +77,9 @@ cd backend
 source .venv/bin/activate       # Linux/Mac
 
 # Instalar dependencias
-pip install fastapi uvicorn sqlalchemy psycopg2-binary passlib bcrypt pydantic
+pip install fastapi uvicorn sqlalchemy passlib bcrypt pydantic
 
-# Cargar datos iniciales (solo la primera vez)
+# Crear tablas y cargar datos iniciales (solo la primera vez)
 python seed.py
 
 # Iniciar servidor
@@ -101,11 +105,8 @@ App disponible en: http://localhost:5173
 
 Ver [docs/DATABASE.md](docs/DATABASE.md) para el esquema completo.
 
-La base de datos debe llamarse `elearning` en PostgreSQL local.
-
-```sql
-CREATE DATABASE elearning;
-```
+La base de datos es SQLite. El archivo `elearning.db` se crea automáticamente al correr `python seed.py`.
+No se necesita ninguna configuración adicional.
 
 ---
 
@@ -127,17 +128,18 @@ CREATE DATABASE elearning;
 
 ## Estado del MVP (75-80%)
 
-### ✅ Implementado
+### Implementado
 - Registro e inicio de sesión con hash seguro
 - Dashboard con estadísticas reales
-- Navegación por materias → temas → preguntas
+- Navegación por materias, temas y preguntas
 - Sistema de preguntas interactivo con feedback inmediato
 - Guardado de intentos en base de datos
 - Cálculo automático de progreso por tema
 - Modo oscuro / claro
 - Diseño responsive
+- Iconos SVG en toda la interfaz (sin emojis)
 
-### 🔲 Pendiente (20-25%)
+### Pendiente (20-25%)
 - Simulacros cronometrados completos
 - JWT para autenticación stateless
 - Más materias (Matemática, Español, Ciencias, Inglés)
@@ -153,5 +155,7 @@ Se utilizó **Kiro (Amazon)** como asistente de desarrollo para:
 - Generación del sistema de CSS con variables para temas
 - Estructura de componentes React
 - Lógica del cálculo de progreso desde `attempts`
+- Migración de PostgreSQL a SQLite
+- Sistema de iconos SVG
 
 Todo el código generado fue revisado, adaptado y comprendido antes de integrarse al proyecto.
