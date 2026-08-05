@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Icon from "../components/Icon"
 
@@ -49,6 +50,7 @@ const subjects = [
 
 export default function Landing() {
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div className="page">
@@ -73,12 +75,48 @@ export default function Landing() {
           <button className="btn btn-primary btn-sm" onClick={() => navigate("/register")}>
             Empezar gratis
           </button>
+          {/* Botón hamburguesa — solo móvil */}
+          <button
+            onClick={() => setMenuOpen(m => !m)}
+            style={{
+              display: "none", background: "none", border: "none",
+              cursor: "pointer", color: "var(--text)", padding: ".35rem"
+            }}
+            className="hamburger-btn"
+          >
+            <Icon id={menuOpen ? "x-mark" : "menu"} size={24} />
+          </button>
         </div>
       </nav>
 
+      {/* Menú móvil desplegable */}
+      {menuOpen && (
+        <div style={{
+          position: "fixed", top: "68px", left: 0, right: 0, zIndex: 99,
+          background: "var(--surface)", borderBottom: "1px solid var(--border)",
+          padding: "1rem", display: "flex", flexDirection: "column", gap: ".5rem"
+        }}>
+          {[
+            { label: "Características", href: "#features" },
+            { label: "Cómo funciona",   href: "#how" },
+            { label: "Materias",         href: "#subjects" },
+          ].map(l => (
+            <a key={l.href} href={l.href}
+              onClick={() => setMenuOpen(false)}
+              style={{ padding: ".75rem 1rem", borderRadius: "8px", color: "var(--text)",
+                       textDecoration: "none", fontWeight: 500, background: "var(--surface2)" }}>
+              {l.label}
+            </a>
+          ))}
+          <button className="btn btn-primary btn-full" onClick={() => navigate("/register")}>
+            Empezar gratis
+          </button>
+        </div>
+      )}
+
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="hero">
-        <div className="container" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
+        <div className="container hero-inner">
 
           {/* Texto */}
           <div className="hero-content fade-in">

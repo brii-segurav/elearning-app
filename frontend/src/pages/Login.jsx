@@ -18,7 +18,8 @@ function Login() {
     try {
       const data = await api.post("/login", { email, password })
 
-      if (data.msg === "Inicio de sesión exitoso") {
+      if (data.token) {
+        localStorage.setItem("token", data.token)
         localStorage.setItem("auth", "true")
         localStorage.setItem("user", JSON.stringify(data.user))
         document.documentElement.setAttribute("data-theme", data.user.theme || "light")
@@ -59,7 +60,7 @@ function Login() {
               gap: ".6rem"
             }}>
               <Icon id={f.iconId} size={18} />
-              {f.label}
+              <span>{f.label}</span>
             </div>
           ))}
         </div>
@@ -94,6 +95,15 @@ function Login() {
                 onChange={e => setPassword(e.target.value)}
                 required
               />
+              <div style={{ textAlign: "right", marginTop: ".4rem" }}>
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  style={{ background: "none", border: "none", color: "var(--primary)", fontSize: ".85rem", cursor: "pointer" }}
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -109,7 +119,7 @@ function Login() {
                 gap: ".5rem"
               }}>
                 <Icon id="warning" size={16} />
-                {error}
+                <span>{error}</span>
               </div>
             )}
 

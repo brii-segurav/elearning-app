@@ -2,13 +2,15 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../services/api"
 import Icon from "../components/Icon"
+import { useTranslation } from "../i18n"
 
 const TOPIC_ICONS = ["flag", "map", "scale", "globe", "scroll"]
 
 function Topics() {
   const { subjectId } = useParams()
-  const navigate = useNavigate()
-  const user = JSON.parse(localStorage.getItem("user")) || {}
+  const navigate      = useNavigate()
+  const user          = JSON.parse(localStorage.getItem("user")) || {}
+  const t             = useTranslation()
 
   const [topics, setTopics] = useState([])
   const [subject, setSubject] = useState(null)
@@ -36,9 +38,9 @@ function Topics() {
   }, [subjectId])
 
   const difficultyLabel = (pct) => {
-    if (pct >= 80) return { label: "Dominado",    cls: "badge-success" }
-    if (pct >= 40) return { label: "En progreso", cls: "badge-warning" }
-    return              { label: "Sin iniciar",   cls: "badge-primary" }
+    if (pct >= 80) return { label: t("mastered"),    cls: "badge-success" }
+    if (pct >= 40) return { label: t("inProgress"),  cls: "badge-warning" }
+    return              { label: t("notStarted"),    cls: "badge-primary" }
   }
 
   if (loading) {
@@ -63,14 +65,14 @@ function Topics() {
             {user?.name}
           </span>
           <button className="btn btn-ghost btn-sm" onClick={() => navigate("/dashboard")}>
-            Dashboard
+            {t("dashboard")}
           </button>
         </div>
       </nav>
 
       <div className="container main-content fade-in">
         <button className="back-btn" onClick={() => navigate("/dashboard")}>
-          ← Volver a materias
+          {t("backToSubjects")}
         </button>
 
         <div className="section-header">
@@ -96,7 +98,6 @@ function Topics() {
                 <div
                   key={topic.id}
                   className="topic-card"
-                  onClick={() => navigate(`/questions/${topic.id}`)}
                 >
                   <div className="flex-between">
                     <Icon id={TOPIC_ICONS[i] || "book"} size={24} style={{ color: "var(--primary)" }} />
@@ -108,7 +109,7 @@ function Topics() {
 
                   <div>
                     <div className="flex-between" style={{ marginBottom: ".4rem", fontSize: ".85rem" }}>
-                      <span className="text-muted">Progreso</span>
+                      <span className="text-muted">{t("progressLabel")}</span>
                       <span className="text-primary fw-bold">{pct}%</span>
                     </div>
                     <div className="progress-track">
@@ -116,11 +117,21 @@ function Topics() {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: ".5rem" }}>
-                    <span className="btn btn-outline btn-sm" style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
-                      {pct > 0 ? "Continuar práctica" : "Comenzar"}
+                  <div style={{ marginTop: ".5rem", display: "flex", gap: ".5rem" }}>
+                    <button className="btn btn-outline btn-sm" style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}
+                      onClick={() => navigate(`/flashcards/${topic.id}`)}>
+                      {pct > 0 ? t("continuePractice") : t("flashcards")}
                       <Icon id="arrow-right" size={14} />
-                    </span>
+                    </button>
+                    <button className="btn btn-sm" style={{
+                      display: "inline-flex", alignItems: "center", gap: ".3rem",
+                      background: "var(--primary)", color: "#fff", borderRadius: "8px",
+                      padding: ".35rem .75rem", fontSize: ".82rem", fontWeight: 600,
+                      border: "none", cursor: "pointer"
+                    }} onClick={() => navigate(`/questions/${topic.id}?mode=quiz`)}>
+                      <Icon id="clock" size={13} />
+                      <span>{t("quiz3min")}</span>
+                    </button>
                   </div>
                 </div>
               )
