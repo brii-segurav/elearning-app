@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from database import engine
-from routes import auth, subjects, topics, questions, attempts, progress
+from routes import auth, subjects, topics, questions, attempts, progress, search, cogi
 
 
 def create_tables():
@@ -126,6 +126,8 @@ app.include_router(topics.router)
 app.include_router(questions.router)
 app.include_router(attempts.router)
 app.include_router(progress.router)
+app.include_router(search.router)
+app.include_router(cogi.router)
 
 
 @app.get("/", tags=["Root"])

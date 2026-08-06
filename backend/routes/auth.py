@@ -47,6 +47,17 @@ def send_reset_email(to_email: str, code: str):
         server.sendmail(GMAIL_USER, to_email, msg.as_string())
 
 
+# ── Test correo (solo para diagnóstico) ───────────────────────────────────────
+@router.post("/test-email")
+def test_email(body: dict):
+    to = body.get("to", GMAIL_USER)
+    try:
+        send_reset_email(to, "123456")
+        return {"msg": f"Correo enviado a {to}"}
+    except Exception as e:
+        return {"error": str(e), "gmail_user": GMAIL_USER, "password_len": len(GMAIL_PASSWORD)}
+
+
 # ── Register ──────────────────────────────────────────────────────────────────
 @router.post("/register")
 def register(user: UserRegister):

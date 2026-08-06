@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../services/api"
 import Icon from "../components/Icon"
-import { useTranslation, notifyLanguageChange } from "../i18n"
+import SearchBar from "../components/SearchBar"
+import { useT, applyLang } from "../i18n.jsx"
 
 function getUser() {
   return JSON.parse(localStorage.getItem("user")) || {}
@@ -10,7 +11,7 @@ function getUser() {
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
 function Navbar({ user, section, setSection, theme, toggleTheme, onLogout }) {
-  const t = useTranslation()
+  const t = useT()
   const navItems = [
     { id: "subjects", labelKey: "subjects",  iconId: "book"      },
     { id: "progress", labelKey: "progress",  iconId: "chart"     },
@@ -32,6 +33,7 @@ function Navbar({ user, section, setSection, theme, toggleTheme, onLogout }) {
           </button>
         ))}
       </div>
+      {/* Buscador central */}
       <div className="navbar-actions">
         <button className="btn btn-ghost btn-sm" onClick={toggleTheme}>
           <Icon id={theme === "dark" ? "sun" : "moon"} size={18} />
@@ -55,7 +57,7 @@ function Dashboard() {
   const [user, setUser]       = useState(getUser())
   const [section, setSection] = useState("subjects")
   const [theme, setTheme]     = useState(user.theme || "light")
-  const t = useTranslation()
+  const t = useT()
 
   useEffect(() => { if (!localStorage.getItem("auth")) navigate("/login") }, [])
   useEffect(() => { document.documentElement.setAttribute("data-theme", theme) }, [theme])
@@ -79,6 +81,10 @@ function Dashboard() {
     <div className="page">
       <Navbar user={user} section={section} setSection={setSection}
         theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
+      {/* Buscador — debajo del navbar, visible en todas las secciones */}
+      <div className="container" style={{ paddingTop: "1.25rem" }}>
+        <SearchBar />
+      </div>
       <div className="container main-content">
         <div className="fade-in" style={{ marginBottom: "2rem" }}>
           <h1 style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
@@ -100,7 +106,7 @@ export default Dashboard
 
 // ── Materias ──────────────────────────────────────────────────────────────────
 function SubjectsSection({ user, navigate }) {
-  const t = useTranslation()
+  const t = useT()
   const [subjects, setSubjects] = useState([])
   const [stats, setStats]       = useState(null)
 
@@ -137,7 +143,7 @@ function SubjectsSection({ user, navigate }) {
       <div className="section-header">
         <h2>{t("availableSubjects")}</h2>
         <span className="badge badge-primary">
-          {subjects.length} {subjects.length !== 1 ? t("subjects_plural") : t("subject")}
+          {subjects.length} {subjects.length !== 1 ? t("subjectsPlural") : t("subject")}
         </span>
       </div>
 
@@ -151,7 +157,7 @@ function SubjectsSection({ user, navigate }) {
             <Icon id="scroll" size={36} />
             <div>
               <h3 style={{ color: "#fff", marginBottom: ".25rem" }}>{t("simulacroMEP")}</h3>
-              <p style={{ opacity: .85, fontSize: ".9rem", margin: 0 }}>{t("simulacroDesc")}</p>
+              <p style={{ color: "rgba(255,255,255,.9)", fontSize: ".9rem", margin: 0 }}>{t("simulacroDesc")}</p>
             </div>
           </div>
           <Icon id="arrow-right" size={24} />
@@ -189,7 +195,7 @@ function SubjectsSection({ user, navigate }) {
 
 // ── Progreso ──────────────────────────────────────────────────────────────────
 function ProgressSection({ user }) {
-  const t = useTranslation()
+  const t = useT()
   const [progress, setProgress] = useState(null)
   const [loading, setLoading]   = useState(true)
 
@@ -254,7 +260,7 @@ function ProgressSection({ user }) {
 
 // ── Noticias ──────────────────────────────────────────────────────────────────
 function NewsSection() {
-  const t = useTranslation()
+  const t = useT()
   const news = [
     { iconId: "calendar", title: t("newsTitle"), body: "Las pruebas nacionales se realizarán en noviembre.", tag: "Importante" },
     { iconId: "book",     title: t("availableSubjects"), body: "Ya puedes practicar Historia, Geografía, Cívica e Historia Universal.", tag: "Nuevo" },
@@ -288,7 +294,7 @@ function NewsSection() {
 
 // ── Mi cuenta ─────────────────────────────────────────────────────────────────
 function AccountSection({ user, setUser, setTheme }) {
-  const t = useTranslation()
+  const t = useT()
   const [form, setForm] = useState({
     name:      user.name      || "",
     last_name: user.last_name || "",
@@ -307,7 +313,7 @@ function AccountSection({ user, setUser, setTheme }) {
     setUser(updated)
     setTheme(form.theme)
     document.documentElement.setAttribute("data-theme", form.theme)
-    notifyLanguageChange()   // ← reactiva todas las traducciones
+    applyLang()   // ← reactiva todas las traducciones
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
   }

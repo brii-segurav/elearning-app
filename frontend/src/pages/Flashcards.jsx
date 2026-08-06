@@ -2,18 +2,20 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../services/api"
 import Icon from "../components/Icon"
+import { useT } from "../i18n.jsx"
 
 function Flashcards() {
-  const { topicId }  = useParams()
-  const navigate     = useNavigate()
+  const { topicId } = useParams()
+  const navigate    = useNavigate()
+  const t           = useT()
 
-  const [cards, setCards]       = useState([])
-  const [current, setCurrent]   = useState(0)
-  const [flipped, setFlipped]   = useState(false)
-  const [loading, setLoading]   = useState(true)
-  const [known, setKnown]       = useState(new Set())
-  const [reviewing, setReviewing] = useState(false)  // repasando solo las difíciles
-  const [done, setDone]         = useState(false)
+  const [cards, setCards]           = useState([])
+  const [current, setCurrent]       = useState(0)
+  const [flipped, setFlipped]       = useState(false)
+  const [loading, setLoading]       = useState(true)
+  const [known, setKnown]           = useState(new Set())
+  const [reviewing, setReviewing]   = useState(false)
+  const [done, setDone]             = useState(false)
 
   useEffect(() => {
     if (!localStorage.getItem("auth")) { navigate("/login"); return }
@@ -23,10 +25,7 @@ function Flashcards() {
       .finally(() => setLoading(false))
   }, [topicId])
 
-  const activeCards = reviewing
-    ? cards.filter(c => !known.has(c.id))
-    : cards
-
+  const activeCards = reviewing ? cards.filter(c => !known.has(c.id)) : cards
   const card = activeCards[current]
 
   const handleFlip = async () => {
@@ -34,9 +33,7 @@ function Flashcards() {
       try {
         const u = JSON.parse(localStorage.getItem("user")) || {}
         const data = await api.post("/attempt", {
-          user_id:         u.id || 0,
-          question_id:     card.id,
-          selected_answer: "A"
+          user_id: u.id || 0, question_id: card.id, selected_answer: "A"
         })
         const correctLetter = data.correct_answer
         const correctText   = card[`option_${correctLetter.toLowerCase()}`]
@@ -53,25 +50,18 @@ function Flashcards() {
   const handleKnow = () => {
     setKnown(prev => new Set([...prev, card.id]))
     setFlipped(false)
-    if (current + 1 >= activeCards.length) {
-      setDone(true)
-    } else {
-      setCurrent(c => c + 1)
-    }
+    if (current + 1 >= activeCards.length) setDone(true)
+    else setCurrent(c => c + 1)
   }
 
   const handleDontKnow = () => {
     setFlipped(false)
-    if (current + 1 >= activeCards.length) {
-      setDone(true)
-    } else {
-      setCurrent(c => c + 1)
-    }
+    if (current + 1 >= activeCards.length) setDone(true)
+    else setCurrent(c => c + 1)
   }
 
   const handleRestart = () => {
-    setCurrent(0); setFlipped(false); setKnown(new Set())
-    setDone(false); setReviewing(false)
+    setCurrent(0); setFlipped(false); setKnown(new Set()); setDone(false); setReviewing(false)
   }
 
   const handleReviewWeak = () => {
@@ -79,40 +69,30 @@ function Flashcards() {
   }
 
   if (loading) return (
-    <div className="flex-center" style={{ minHeight: "100vh" }}>
-      <p>Cargando flashcards...</p>
-    </div>
+    <div className="flex-center" style={{ minHeight: "100vh" }}><p>{t("loadingFlashcards")}</p></div>
   )
 
   if (cards.length === 0) return (
     <div className="page">
       <nav className="navbar">
-        <div className="navbar-brand">
-          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
-          <span>Cognia Lab</span>
-        </div>
+        <div className="navbar-brand"><Icon id="flask" size={20} style={{ marginRight: ".4rem" }} /><span>Cognia Lab</span></div>
       </nav>
       <div className="container main-content">
-        <button className="back-btn" onClick={() => navigate(-1)}>← Volver</button>
+        <button className="back-btn" onClick={() => navigate(-1)}>{t("backToTopics")}</button>
         <div className="empty-state">
           <div className="icon"><Icon id="question" size={40} /></div>
-          <h3>Sin contenido disponible</h3>
-          <p>Este tema aún no tiene preguntas cargadas</p>
+          <h3>{t("noQuestions")}</h3><p>{t("noQuestionsDesc")}</p>
         </div>
       </div>
     </div>
   )
 
-  // ── Pantalla final ────────────────────────────────────────────────────────
   if (done) {
     const weak = cards.length - known.size
     return (
       <div className="page">
         <nav className="navbar">
-          <div className="navbar-brand">
-            <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
-            <span>Cognia Lab</span>
-          </div>
+          <div className="navbar-brand"><Icon id="flask" size={20} style={{ marginRight: ".4rem" }} /><span>Cognia Lab</span></div>
         </nav>
         <div className="container main-content">
           <div className="card fade-in" style={{ maxWidth: "480px", margin: "2rem auto", textAlign: "center" }}>
@@ -120,39 +100,31 @@ function Flashcards() {
               <Icon id={known.size === cards.length ? "trophy" : "thumbs-up"} size={56} />
             </div>
             <h2 style={{ marginBottom: ".5rem" }}>
-              {reviewing ? "Repaso completado" : "Mazo completado"}
+              {reviewing ? t("reviewCompleted") : t("deckCompleted")}
             </h2>
             <p style={{ marginBottom: "2rem" }}>
               {known.size === cards.length
-                ? "¡Excelente! Dominaste todas las tarjetas."
-                : `Dominaste ${known.size} de ${cards.length} tarjetas.`}
+                ? t("dominatedAll")
+                : `${t("dominated_of")} ${known.size} ${t("cards_of")} ${cards.length} ${t("cardsLabel")}.`}
             </p>
-
             <div className="grid-2" style={{ marginBottom: "2rem" }}>
               <div className="stat-card">
                 <span className="stat-value text-success">{known.size}</span>
-                <span className="stat-label">Dominadas</span>
+                <span className="stat-label">{t("dominated")}</span>
               </div>
               <div className="stat-card">
-                <span className="stat-value" style={{ color: weak > 0 ? "var(--danger)" : "var(--success)" }}>
-                  {weak}
-                </span>
-                <span className="stat-label">Por repasar</span>
+                <span className="stat-value" style={{ color: weak > 0 ? "var(--danger)" : "var(--success)" }}>{weak}</span>
+                <span className="stat-label">{t("toReview")}</span>
               </div>
             </div>
-
             <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
               {weak > 0 && (
                 <button className="btn btn-primary" onClick={handleReviewWeak}>
-                  Repasar las {weak} difíciles
+                  {t("reviewWeak")} ({weak})
                 </button>
               )}
-              <button className="btn btn-outline" onClick={handleRestart}>
-                Reiniciar mazo completo
-              </button>
-              <button className="btn btn-ghost" onClick={() => navigate(-1)}>
-                ← Volver a temas
-              </button>
+              <button className="btn btn-outline" onClick={handleRestart}>{t("restartDeck")}</button>
+              <button className="btn btn-ghost" onClick={() => navigate(-1)}>{t("backToTopics")}</button>
             </div>
           </div>
         </div>
@@ -160,37 +132,31 @@ function Flashcards() {
     )
   }
 
-  // ── Flashcard activa ──────────────────────────────────────────────────────
   const progress = Math.round((current / activeCards.length) * 100)
 
   return (
     <div className="page">
       <nav className="navbar">
         <div className="navbar-brand">
-          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} />
-          <span>Cognia Lab</span>
+          <Icon id="flask" size={20} style={{ marginRight: ".4rem" }} /><span>Cognia Lab</span>
         </div>
         <div className="navbar-actions">
           <span style={{ fontSize: ".85rem", color: "var(--text-muted)" }}>
-            <span>{current + 1}</span> / <span>{activeCards.length}</span>
-            {reviewing && <span style={{ marginLeft: ".5rem", color: "var(--warning)" }}>(repaso)</span>}
+            {current + 1} / {activeCards.length}
+            {reviewing && <span style={{ marginLeft: ".5rem", color: "var(--warning)" }}>{t("reviewMode")}</span>}
           </span>
           <span className="badge badge-success" style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
-            <Icon id="check" size={12} />
-            <span>{known.size}</span>
+            <Icon id="check" size={12} /><span>{known.size}</span>
           </span>
-          <button className="btn btn-ghost btn-sm" onClick={() => navigate(-1)}>Salir</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => navigate(-1)}>{t("exit")}</button>
         </div>
       </nav>
-
       <div className="container main-content" style={{ maxWidth: "680px" }}>
-        <button className="back-btn" onClick={() => navigate(-1)}>← Volver a temas</button>
-
-        {/* Barra de progreso */}
+        <button className="back-btn" onClick={() => navigate(-1)}>{t("backToTopics")}</button>
         <div style={{ marginBottom: "2rem" }}>
           <div className="flex-between" style={{ marginBottom: ".5rem", fontSize: ".85rem" }}>
             <span className="text-muted">
-              Tarjeta <strong>{current + 1}</strong> de <strong>{activeCards.length}</strong>
+              {t("question")} <strong>{current + 1}</strong> {t("of")} <strong>{activeCards.length}</strong>
             </span>
             <span className="text-primary fw-bold">{progress}%</span>
           </div>
@@ -199,87 +165,60 @@ function Flashcards() {
           </div>
         </div>
 
-        {/* Texto de contexto (si existe) */}
         {card.context_text && !flipped && (
           <div className="card" style={{
-            marginBottom: "1.25rem",
-            background: "var(--surface-2)",
-            borderLeft: "4px solid var(--primary)",
-            fontSize: ".92rem", lineHeight: "1.7"
+            marginBottom: "1.25rem", background: "var(--surface2)",
+            borderLeft: "4px solid var(--primary)", fontSize: ".92rem", lineHeight: "1.7"
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: ".5rem",
                           marginBottom: ".75rem", fontWeight: 600, color: "var(--primary)" }}>
-              <Icon id="scroll" size={16} />
-              <span>Texto de referencia</span>
+              <Icon id="scroll" size={16} /><span>{t("textReference")}</span>
             </div>
             <div style={{ whiteSpace: "pre-line" }}>{card.context_text}</div>
           </div>
         )}
 
-        {/* Tarjeta con flip */}
-        <div
-          onClick={handleFlip}
-          style={{
-            cursor: "pointer",
-            minHeight: "220px",
-            borderRadius: "16px",
-            padding: "2rem",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            background: flipped
-              ? "linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%)"
-              : "var(--surface)",
-            color: flipped ? "#fff" : "var(--text)",
-            border: `2px solid ${flipped ? "transparent" : "var(--border)"}`,
-            boxShadow: "0 4px 24px rgba(79,70,229,.12)",
-            transition: "background 0.3s ease, color 0.3s ease",
-            marginBottom: "1.5rem",
-            userSelect: "none"
-          }}
-        >
+        <div onClick={handleFlip} style={{
+          cursor: "pointer", minHeight: "220px", borderRadius: "16px", padding: "2rem",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          textAlign: "center",
+          background: flipped ? "linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%)" : "var(--surface)",
+          color: flipped ? "#fff" : "var(--text)",
+          border: `2px solid ${flipped ? "transparent" : "var(--border)"}`,
+          boxShadow: "0 4px 24px rgba(79,70,229,.12)",
+          transition: "background 0.3s ease, color 0.3s ease",
+          marginBottom: "1.5rem", userSelect: "none"
+        }}>
           <div style={{ fontSize: ".8rem", fontWeight: 600, opacity: .7, marginBottom: "1rem",
                         textTransform: "uppercase", letterSpacing: ".08em" }}>
-            {flipped ? "Respuesta" : "Pregunta — toca para revelar"}          </div>
-
+            {flipped ? t("answer") : t("tapToReveal")}
+          </div>
           {flipped ? (
             <div style={{ fontSize: "1rem", lineHeight: "1.6", width: "100%" }}>
-              <div style={{ fontSize: ".8rem", fontWeight: 600, opacity: .7,
-                            textTransform: "uppercase", letterSpacing: ".08em", marginBottom: "1rem" }}>
-                Respuesta correcta
-              </div>
               {card.reveal ? (
                 <>
                   <div style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: ".75rem" }}>
                     {card.reveal.letter}. {card.reveal.text}
                   </div>
                   {card.reveal.explanation && (
-                    <div style={{ opacity: .85, fontSize: ".9rem" }}>
-                      {card.reveal.explanation}
-                    </div>
+                    <div style={{ opacity: .85, fontSize: ".9rem" }}>{card.reveal.explanation}</div>
                   )}
                 </>
               ) : (
-                <div style={{ opacity: .7 }}>Cargando respuesta...</div>
+                <div style={{ opacity: .7 }}>{t("loading")}</div>
               )}
             </div>
           ) : (
-            <p style={{ fontSize: "1.05rem", lineHeight: "1.6", fontWeight: 500 }}>
-              {card.question}
-            </p>
+            <p style={{ fontSize: "1.05rem", lineHeight: "1.6", fontWeight: 500 }}>{card.question}</p>
           )}
         </div>
 
-        {/* Hint de opciones (frente de la tarjeta) */}
         {!flipped && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem",
-                        justifyContent: "center", marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem", justifyContent: "center", marginBottom: "1.5rem" }}>
             {["A","B","C","D"].map(l => (
               <span key={l} style={{
                 padding: ".3rem .75rem", borderRadius: "6px",
-                background: "var(--surface-2)", fontSize: ".85rem",
+                background: "var(--surface2)", fontSize: ".85rem",
                 color: "var(--text-muted)", border: "1px solid var(--border)"
               }}>
                 {l}. {card[`option_${l.toLowerCase()}`]}
@@ -288,43 +227,28 @@ function Flashcards() {
           </div>
         )}
 
-        {/* Botones de conocimiento (solo cuando está volteada) */}
         {flipped && (
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-            <button
-              className="btn"
-              onClick={handleDontKnow}
-              style={{
-                flex: 1, maxWidth: "200px",
-                background: "#FEE2E2", color: "#991B1B", border: "none",
-                borderRadius: "10px", padding: ".85rem", fontWeight: 700,
-                fontSize: ".95rem", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center", gap: ".5rem"
-              }}
-            >
-              <Icon id="x-mark" size={18} />
-              <span>No lo sé</span>
+            <button onClick={handleDontKnow} style={{
+              flex: 1, maxWidth: "200px", background: "#FEE2E2", color: "#991B1B", border: "none",
+              borderRadius: "10px", padding: ".85rem", fontWeight: 700, fontSize: ".95rem",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: ".5rem"
+            }}>
+              <Icon id="x-mark" size={18} /><span>{t("iDontKnow")}</span>
             </button>
-            <button
-              className="btn"
-              onClick={handleKnow}
-              style={{
-                flex: 1, maxWidth: "200px",
-                background: "#D1FAE5", color: "#065F46", border: "none",
-                borderRadius: "10px", padding: ".85rem", fontWeight: 700,
-                fontSize: ".95rem", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center", gap: ".5rem"
-              }}
-            >
-              <Icon id="check-circle" size={18} />
-              <span>Lo sé</span>
+            <button onClick={handleKnow} style={{
+              flex: 1, maxWidth: "200px", background: "#D1FAE5", color: "#065F46", border: "none",
+              borderRadius: "10px", padding: ".85rem", fontWeight: 700, fontSize: ".95rem",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: ".5rem"
+            }}>
+              <Icon id="check-circle" size={18} /><span>{t("iKnow")}</span>
             </button>
           </div>
         )}
 
         {!flipped && (
           <p style={{ textAlign: "center", color: "var(--text-muted)", fontSize: ".85rem", marginTop: ".5rem" }}>
-            Toca la tarjeta para ver la respuesta
+            {t("tapCard")}
           </p>
         )}
       </div>
