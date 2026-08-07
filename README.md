@@ -1,21 +1,34 @@
-# Cognia Lab
+# Cognia Lab 🧪
 
-> **Practica hoy. Domina el examen.**
+Plataforma web de preparación para el examen de bachillerato de Costa Rica, enfocada en Estudios Sociales. Permite practicar con preguntas tipo MEP, realizar simulacros cronometrados y contar con un tutor inteligente.
 
-Plataforma de e-learning para la preparación del examen de bachillerato de Costa Rica.
+---
+
+## Características principales
+
+- **Autenticación completa** — registro, login con JWT, recuperación de contraseña por correo
+- **Quizzes cronometrados** — 10 preguntas aleatorias con límite de 3 minutos
+- **Simulacro MEP** — 50 preguntas, 90 minutos, nota en escala 0-100
+- **Flashcards** — tarjetas de estudio con modo de repaso inteligente
+- **Tutor IA (Cogi)** — chatbot flotante powered by Groq (Llama 3.1)
+- **Buscador inteligente** — búsqueda en tiempo real de materias, temas y preguntas
+- **Multiidioma** — español e inglés con cambio instantáneo
+- **Modo oscuro/claro** — tema guardado por usuario
+- **Diseño responsive** — funciona en móvil, tablet y escritorio
 
 ---
 
 ## Stack tecnológico
 
 | Capa | Tecnología |
-|---|---|
-| Frontend | React + Vite |
+|------|-----------|
+| Frontend | React 18 + Vite |
 | Backend | FastAPI (Python) |
-| Base de datos | SQLite (archivo `elearning.db`) |
-| ORM | SQLAlchemy |
-| Seguridad | passlib + bcrypt + SHA-256 |
-| Routing | React Router DOM |
+| Base de datos | SQLite |
+| Autenticación | JWT (python-jose) + bcrypt |
+| IA | Groq API (Llama 3.1 8B) |
+| Correo | Gmail SMTP |
+| Estilos | CSS puro con variables |
 
 ---
 
@@ -24,70 +37,70 @@ Plataforma de e-learning para la preparación del examen de bachillerato de Cost
 ```
 elearning-app/
 ├── backend/
-│   ├── main.py          # Entry point FastAPI
-│   ├── database.py      # Conexión SQLite
-│   ├── seed.py          # Crea tablas y carga datos iniciales
+│   ├── main.py              # Punto de entrada FastAPI
+│   ├── database.py          # Conexión SQLite
+│   ├── seed.py              # Datos iniciales
+│   ├── seed_extra.py        # Preguntas adicionales estilo MEP
 │   ├── auth/
-│   │   └── security.py  # Hash y verificación de contraseñas
+│   │   └── security.py      # JWT + bcrypt
 │   ├── routes/
-│   │   ├── auth.py      # POST /register, POST /login
-│   │   ├── subjects.py  # GET /subjects
-│   │   ├── topics.py    # GET /topics/{subject_id}
-│   │   ├── questions.py # GET /questions/{topic_id}
-│   │   ├── attempts.py  # POST /attempt
-│   │   └── progress.py  # GET /progress/{user_id}, GET /stats/{user_id}
+│   │   ├── auth.py          # Login, register, reset password
+│   │   ├── subjects.py      # Materias
+│   │   ├── topics.py        # Temas
+│   │   ├── questions.py     # Preguntas, quiz, simulacro
+│   │   ├── attempts.py      # Intentos y progreso
+│   │   ├── progress.py      # Estadísticas
+│   │   ├── search.py        # Buscador
+│   │   └── cogi.py          # Tutor IA
 │   └── schemas/
 │       ├── user.py
 │       └── attempt.py
 └── frontend/
+    ├── public/
+    │   └── icons.svg        # Sprite de íconos SVG
     └── src/
-        ├── main.jsx
-        ├── index.css
+        ├── main.jsx         # Entrada React
+        ├── i18n.jsx         # Sistema de traducciones
+        ├── index.css        # Estilos globales
         ├── components/
-        │   └── Icon.jsx         # Componente de iconos SVG
-        ├── services/
-        │   └── api.js           # Cliente HTTP centralizado
-        └── pages/
-            ├── App.jsx          # Rutas
-            ├── Login.jsx
-            ├── Register.jsx
-            ├── Dashboard.jsx
-            ├── Topics.jsx
-            └── Questions.jsx
+        │   ├── Icon.jsx     # Componente de íconos
+        │   ├── SearchBar.jsx
+        │   └── Cogi.jsx     # Chatbot flotante
+        ├── pages/
+        │   ├── App.jsx
+        │   ├── Landing.jsx
+        │   ├── Login.jsx
+        │   ├── Register.jsx
+        │   ├── ForgotPassword.jsx
+        │   ├── Dashboard.jsx
+        │   ├── Topics.jsx
+        │   ├── Questions.jsx
+        │   ├── Flashcards.jsx
+        │   └── Simulacro.jsx
+        └── services/
+            └── api.js       # Cliente HTTP
 ```
 
 ---
 
-## Instalación y ejecución
+## Instalación y uso local
 
-### Requisitos previos
+### Requisitos
 - Python 3.10+
 - Node.js 18+
-
-> No se requiere instalar PostgreSQL ni ninguna base de datos externa.
-> SQLite viene incluido con Python y crea el archivo `elearning.db` automáticamente.
 
 ### Backend
 
 ```bash
 cd backend
-
-# Activar entorno virtual
-.venv\Scripts\activate          # Windows
-source .venv/bin/activate       # Linux/Mac
-
-# Instalar dependencias
-pip install fastapi uvicorn sqlalchemy passlib bcrypt pydantic
-
-# Crear tablas y cargar datos iniciales (solo la primera vez)
+pip install fastapi uvicorn sqlalchemy bcrypt python-jose[cryptography] httpx
 python seed.py
-
-# Iniciar servidor
-uvicorn main:app --reload
+python seed_extra.py
+python -m uvicorn main:app --reload
 ```
 
-API disponible en: http://127.0.0.1:8000  
-Documentación Swagger: http://127.0.0.1:8000/docs
+El backend queda disponible en `http://127.0.0.1:8000`  
+Documentación de la API: `http://127.0.0.1:8000/docs`
 
 ### Frontend
 
@@ -97,65 +110,65 @@ npm install
 npm run dev
 ```
 
-App disponible en: http://localhost:5173
+El frontend queda disponible en `http://localhost:5173`
 
 ---
 
 ## Base de datos
 
-Ver [docs/DATABASE.md](docs/DATABASE.md) para el esquema completo.
+SQLite — archivo `backend/elearning.db` (se crea automáticamente al arrancar).
 
-La base de datos es SQLite. El archivo `elearning.db` se crea automáticamente al correr `python seed.py`.
-No se necesita ninguna configuración adicional.
+### Tablas
+
+| Tabla | Descripción |
+|-------|-------------|
+| `users` | Usuarios registrados |
+| `subjects` | Materias (ej: Estudios Sociales) |
+| `topics` | Temas por materia |
+| `questions` | Preguntas con opciones A-D y texto de contexto |
+| `attempts` | Intentos de respuesta por usuario |
+| `progress` | Porcentaje de avance por tema |
+| `exam_results` | Resultados de quizzes y simulacros |
+| `reset_codes` | Códigos temporales de recuperación de contraseña |
 
 ---
 
-## API Endpoints
+## Variables de entorno
+
+Opcionalmente se pueden configurar como variables de entorno:
+
+```env
+GMAIL_USER=labcognia@gmail.com
+GMAIL_PASSWORD=tu_contraseña_de_app
+GROQ_API_KEY=tu_api_key_de_groq
+```
+
+---
+
+## Rutas de la API
 
 | Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/` | Estado de la API |
-| POST | `/register` | Registrar usuario |
+|--------|------|-------------|
+| POST | `/register` | Crear cuenta |
 | POST | `/login` | Iniciar sesión |
+| POST | `/forgot-password` | Solicitar código de reset |
+| POST | `/reset-password` | Cambiar contraseña con código |
 | GET | `/subjects` | Listar materias |
 | GET | `/topics/{subject_id}` | Temas de una materia |
 | GET | `/questions/{topic_id}` | Preguntas de un tema |
-| POST | `/attempt` | Guardar respuesta |
+| GET | `/quiz/{topic_id}` | 10 preguntas aleatorias (quiz) |
+| GET | `/simulacro` | 50 preguntas aleatorias |
+| POST | `/attempt` | Registrar respuesta |
 | GET | `/progress/{user_id}` | Progreso del usuario |
-| GET | `/stats/{user_id}` | Estadísticas del usuario |
+| GET | `/stats/{user_id}` | Estadísticas generales |
+| GET | `/search?q=` | Búsqueda global |
+| POST | `/cogi` | Chat con tutor IA |
+| POST | `/exam-result` | Guardar resultado de examen |
 
 ---
 
-## Estado del MVP (75-80%)
+## Créditos
 
-### Implementado
-- Registro e inicio de sesión con hash seguro
-- Dashboard con estadísticas reales
-- Navegación por materias, temas y preguntas
-- Sistema de preguntas interactivo con feedback inmediato
-- Guardado de intentos en base de datos
-- Cálculo automático de progreso por tema
-- Modo oscuro / claro
-- Diseño responsive
-- Iconos SVG en toda la interfaz (sin emojis)
-
-### Pendiente (20-25%)
-- Simulacros cronometrados completos
-- JWT para autenticación stateless
-- Más materias (Matemática, Español, Ciencias, Inglés)
-- Tutor IA con LLM
-- Despliegue en producción
-
----
-
-## Uso de IA en el desarrollo
-
-Se utilizó **Kiro (Amazon)** como asistente de desarrollo para:
-- Diseño de arquitectura modular del backend
-- Generación del sistema de CSS con variables para temas
-- Estructura de componentes React
-- Lógica del cálculo de progreso desde `attempts`
-- Migración de PostgreSQL a SQLite
-- Sistema de iconos SVG
-
-Todo el código generado fue revisado, adaptado y comprendido antes de integrarse al proyecto.
+Desarrollado como proyecto de bachillerato técnico.  
+Datos de Estudios Sociales basados en el programa oficial del MEP (Ministerio de Educación Pública de Costa Rica).  
+IA powered by [Groq](https://groq.com) — Llama 3.1 8B Instant.

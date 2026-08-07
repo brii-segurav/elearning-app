@@ -52,3 +52,12 @@ coverage/
 .tmp/
 tmp/
 *.tmp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos SQLite (local, no subir al repo)
+*.db

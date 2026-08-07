@@ -571,3 +571,179 @@ select.input { cursor: pointer; }
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile First
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Navbar ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 56px;
+    gap: .5rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+  .navbar-nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: .35rem;
+    gap: .15rem;
+    scrollbar-width: none;
+  }
+  .navbar-nav::-webkit-scrollbar { display: none; }
+  .nav-btn { font-size: .8rem; padding: .4rem .7rem; white-space: nowrap; }
+  .navbar-actions { gap: .5rem; }
+  .navbar-brand { font-size: 1rem; }
+}
+
+/* ── Container & layout ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .container { padding: 0 1rem; }
+  .main-content { padding: 1.25rem 0; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+}
+
+/* ── Auth pages ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-hero { display: none; }
+  .auth-form-side { padding: 2rem 1.25rem; align-items: flex-start; padding-top: 3rem; }
+  .auth-box { max-width: 100%; }
+}
+
+/* ── Dashboard stats ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .stat-card { padding: 1rem; }
+  .stat-value { font-size: 1.5rem; }
+}
+
+/* ── Subject cards ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .subject-card { padding: 1.5rem; }
+}
+
+/* ── Topic cards ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .topic-card { padding: 1rem; }
+}
+
+/* ── Questions / Quiz ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .question-card { padding: 1rem; }
+  .question-text { font-size: 1rem; }
+  .option-btn { padding: .8rem 1rem; font-size: .9rem; }
+  .option-letter { width: 28px; height: 28px; font-size: .8rem; }
+}
+
+/* ── Simulacro grid layout ────────────────────────────────── */
+@media (max-width: 900px) {
+  .simulacro-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .simulacro-nav-panel {
+    position: static !important;
+    order: -1;
+  }
+}
+
+/* ── Flashcards ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .flashcard-container { padding: 1rem; }
+}
+
+/* ── Landing page ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .landing-nav { padding: 0 1rem; }
+  .landing-nav-links { display: none; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-sub { font-size: 1rem; }
+  .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+  .hero-stat-num { font-size: 1.4rem; }
+  .section { padding: 4rem 0; }
+  .section-title { font-size: 1.75rem; }
+  .cta-section { padding: 3rem 1.5rem; margin: 0 1rem 4rem; }
+  .cta-section h2 { font-size: 1.75rem; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding-top: 80px; }
+  .hero h1 { font-size: 1.9rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: .75rem; }
+}
+
+/* ── Section header en móvil ──────────────────────────────── */
+@media (max-width: 480px) {
+  .section-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+}
+
+/* ── Progress section ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .card { padding: 1rem; }
+}
+
+/* ── Botones en móvil ─────────────────────────────────────── */
+@media (max-width: 480px) {
+  .btn { padding: .65rem 1.1rem; font-size: .9rem; }
+  .btn-lg { padding: .8rem 1.5rem; font-size: .95rem; }
+}
+
+/* ── Resultados del simulacro ─────────────────────────────── */
+@media (max-width: 640px) {
+  .results-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Navbar actions en móvil — ocultar texto, solo iconos ─── */
+@media (max-width: 480px) {
+  .navbar-actions .hide-mobile { display: none; }
+}
+
+/* ── option-btn selected (simulacro) ──────────────────────── */
+.option-btn.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.option-btn.selected .option-letter {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ── Hero inner grid ──────────────────────────────────────── */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  .hero-content { max-width: 100%; }
+  .hero-badge   { justify-content: center; }
+  .hero-actions { justify-content: center; }
+  .hero-stats   { justify-content: center; }
+  /* Ocultar la imagen/ilustración del hero en móvil */
+  .hero-visual  { display: none; }
+}
+
+/* ── Hamburger visible solo en móvil ──────────────────────── */
+@media (max-width: 768px) {
+  .hamburger-btn { display: block !important; }
+  .landing-nav .btn-ghost { display: none; }
+}
+
+/* ── Search spinner ───────────────────────────────────────── */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
