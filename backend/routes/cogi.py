@@ -5,6 +5,9 @@ Usa Groq (llama-3.1-8b-instant) para responder preguntas del bachillerato costar
 import os
 import httpx
 from fastapi import APIRouter
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter(tags=["Cogi"])
 
